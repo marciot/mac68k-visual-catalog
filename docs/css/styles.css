@@ -1,0 +1,121 @@
+:root {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --text: #222;
+  --muted: #666;
+  --border: #ddd;
+  --accent: #2563eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  background: var(--bg);
+  color: var(--text);
+
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 18px;
+  line-height: 1.75;
+}
+
+h1 {
+  font-size: 2.5rem;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+}
+
+h2 {
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin: 1.25rem 0;
+}
+
+em {
+  font-style: normal;
+  font-weight: 500;
+  border-bottom: 2px solid rgba(37, 99, 235, 0.25);
+}
+
+img {
+  max-width: 100%;
+}
+
+code {
+  border-radius: 6px;
+  font-size: 0.9em;
+  background-color: #eef2ff;
+  padding: 0 0;
+}
+
+div.highlighter-rouge {
+  border-radius: 6px;
+  font-size: 0.9em;
+  background-color: #eef2ff;
+  padding: 0.2em 1em;
+  overflow: auto;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(37,99,235,0.05),
+      transparent 40%
+    );
+}
+
+p img {
+  vertical-align: middle;
+  margin: 0 0.2em;
+}
+
+.dropCap {
+  float: left;
+  margin:  0.2em 0.2em;
+  height: 4em;
+}
+
+.floatLeft {
+  float: left;
+  margin:  0.5em 0.5em;
+  max-width: 50%;
+}
+
+.floatRight {
+  float: right;
+  margin:  0.5em 0.5em;
+  max-width: 50%;
+}
+
+figcaption {
+  font-size: small;
+}
+
+details > summary h1,
+details > summary h2,
+details > summary h3 {
+  display: inline-block;
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>About this collection</title>
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+<body>
+
+<h1>About this collection</h1>
+
+<p>
+There are many icon sets out there, but my goal was to capture icons
+that were stored <em>within</em> Macintosh applications. I chose the
+following resources in the hopes of capturing a good set of
+well-known and obscure vintage Macintosh applications.
+</p>
+
+<ul>
+  <li><a href="https://infinitemac.org/">InfiniteMac.org</a>: Infinite HD as retrieved on July 5th, 2026
+  <li><a href="https://macintoshgarden.org/apps/educorps-shareware-cd-version-80">Educorp's Shareware CD Version 8.0 Discs 1 and 2</a>
+  <li><a href="https://macintoshgarden.org/apps/bmug-pd-rom-i-1988">BMUG PD-ROM I (1988)</a>
+  <li><a href="https://macintoshgarden.org/apps/mega-rom-20">MegaROM 2.0</a>
+  <li><a href="https://macintoshgarden.org/apps/mac-mega-rom-32">MegaROM 3.0 and 3.2</a>
+  <li><a href="https://macintoshgarden.org/apps/maximum">Maximum 1.0 and Maximum 8.0</a>
+  <li><a href="https://macintoshgarden.org/apps/macintosh-demo-software-zenshuu-cd-rom-94">Macintosh Demo Software Zenshuu CD-ROM '94</a>
+  <li><a href="https://macintoshgarden.org/apps/online-software-1000-utilities-game">Online Software 1000 Utilities & Game</a>
+  <li><a href="https://macintoshgarden.org/apps/msd-japan-inc-japanese-mac-software-compilation-cd">MSD JAPAN Joke Mac</a>
+  <li><a href="https://macintoshgarden.org/games/mac-treasure-chest-best-games-101">Mac Treasure Chest: 101 Best Games</a>
+</ul>
+
+<h2>Credits and Acknowledgements</h2>
+
+<p>
+Includes MIT licensed code adapted from:
+
+<ul>
+  <li>James Bowman's <a href="https://github.com/jamesbowman/pngout">pngout</a>
+  <li>Rich Geldreich's <a href="https://github.com/richgel999/miniz">miniz</a>
+  <li>Levko Kravets's <a href="https://github.com/kravets-levko/tinytar">tinytar</a>
+  <li>From Borislav Sapundzhiev's <a href="https://github.com/bsapundzhiev/ucwebsocket">ucwebsocket</a>:
+  <ul>
+    <li>"sha1.h" and "sha1.c"
+    <li>Jouni Malinen's "base64.h" and "base64.c"
+  </ul>
+  </li>
+  <li>With <a href="https://www.tempel.org/macdev/dtdb_secrets.html">assistance</a> and code from Thomas Tempelmann, author of <a href="https://www.tempel.org/macdev/index.html#DTDBDiver">Desktop DB Diver</a>
+</ul>
+
+</p>
+
+<p>
+Although I cannot read Japanese, I made an effort to render Japanese
+characters with the help, in part, from Matt Sephton's
+<a href="https://blog.gingerbeardman.com/2022/03/31/working-with-classic-macintosh-text-encodings-in-the-age-of-unicode/">
+blog post on MacJapanese</a>. The free version ChatGPT also provided
+assistance with code reviews, the special handling of MacRoman and
+Shift-JIS encoded strings, the PowerShell scripts used for data
+processing and advanced JavaScript tricks.
+</p>
+
+<p>
+With gratitude to the <a href="https://macintoshgarden.org">Macintosh Garden</a>,
+<a href="https://infinitemac.org">infinitemac.org</a> and to the
+publishers of the various compilation CD. All icons copyright by
+their respective artists.
+</p>
+
+
+
+<h2>How I collected this data</h2>
+
+<p>
+I wrote a tool that opens every resource fork on a volume and extracts
+any "ICN#", "ICON", "icl4", "icl8" and "cicn" resources it finds.
+The tool generates a SHA-1 hash of the pixel data of each icon to
+eliminate duplicate icons and keeps only the unique ones. I then copied
+the resulting data to my PC and designed several PowerShell scripts to
+build a data set that could be easily streamed by a web page.
+</p>
+
+<h2>Support this project</h2>
+
+To support this project, please visit my <a href="https://github.com/marciot/mac68k-visual-catalog">GitHub</a> or <a href="https://www.patreon.com/marciot">Patreon</a> page.
+
+</body>
+</html>
