@@ -63,8 +63,10 @@ class InfiniteIcons extends HTMLElement {
   cols = 0;
   rowsPerPage = 0;
 
-  evenPageNum = -1;
-  oddPageNum = -1;
+  evenPage = {element: null, pageNum: -1, generation: 0};
+  oddPage =  {element: null, pageNum: -1, generation: 0};
+
+  generation = 0;
 
   constructor() {
     super();
@@ -91,7 +93,7 @@ class InfiniteIcons extends HTMLElement {
   }
 
   buildPage(page) {
-    page.innerHTML = "";
+    const fragment = document.createDocumentFragment();
     for (let r = 0; r < this.rowsPerPage; r++) {
       const row = document.createElement("div");
       row.className = "row";
@@ -99,24 +101,27 @@ class InfiniteIcons extends HTMLElement {
         const img = document.createElement("img");
         row.appendChild(img);
       }
-      page.appendChild(row);
+      fragment.appendChild(row);
     }
     if (this.numbered) {
       const span = document.createElement("span");
       span.className = "rowNumbers";
-      page.appendChild(span);
+      fragment.appendChild(span);
     }
+    page.element.replaceChildren(fragment);
   }
 
-  async fillPage(page, pageNum) {
-    const pageRect = this.evenPage.getBoundingClientRect();
+  async fillPage(page) {
+    const generation = ++page.generation;
+
+    const pageRect = this.evenPage.element.getBoundingClientRect();
     const pageHeight = pageRect.bottom - pageRect.top;
 
-    let startIndex = pageNum * this.rowsPerPage * this.cols;
+    let startIndex = page.pageNum * this.rowsPerPage * this.cols;
     const total = this.rowsPerPage * this.cols;
 
     // Hide the icons while loading
-    for (const row of page.children) {
+    for (const row of page.element.children) {
       for (const img of row.children) {
         img.style.visibility = "hidden";
         img.src = '';
@@ -125,15 +130,20 @@ class InfiniteIcons extends HTMLElement {
     }
 
     // Move the page into position
-    page.style.top = (pageNum * pageHeight) + "px";
+    page.element.style.top = (page.pageNum * pageHeight) + "px";
 
     let iconIndex = 0;
 
     for await (const icon of this.iconLoader.loadIcons(startIndex, total)) {
+      if (page.generation > generation) {
+        // User must have scrolled
+        console.log("User scrolled while previous icons were loading\n");
+        return;
+      }
       const rowIndex = Math.floor(iconIndex / this.cols);
       const colIndex = iconIndex % this.cols;
 
-      const row = page.children[rowIndex];
+      const row = page.element.children[rowIndex];
       const img = row.children[colIndex];
 
       if (img) {
@@ -142,16 +152,15 @@ class InfiniteIcons extends HTMLElement {
         img.title = icon.title;
         img.dataset.srcFile = icon.name;
       }
-
       iconIndex++;
     }
     if (this.numbered) {
-      page.lastElementChild.innerText = (startIndex + iconIndex).toLocaleString();
+      page.element.lastElementChild.innerText = (startIndex + iconIndex).toLocaleString();
     }
   }
 
   async update(forceUpdate) {
-    const pageRect   = this.evenPage.getBoundingClientRect();
+    const pageRect   = this.evenPage.element.getBoundingClientRect();
     const pageHeight = pageRect.bottom - pageRect.top;
 
     const scrollY   = -this.container.getBoundingClientRect().top;
@@ -171,14 +180,14 @@ class InfiniteIcons extends HTMLElement {
       newEvenPageNum = pageIndex + 1;
     }
 
-    if (this.evenPageNum !== newEvenPageNum) {
-      this.evenPageNum = newEvenPageNum;
-      await this.fillPage (this.evenPage, this.evenPageNum);
+    if (this.evenPage.pageNum !== newEvenPageNum) {
+      this.evenPage.pageNum = newEvenPageNum;
+      await this.fillPage (this.evenPage);
     }
 
-    if (this.oddPageNum !== newOddPageNum ) {
-      this.oddPageNum = newOddPageNum;
-      await this.fillPage (this.oddPage, this.oddPageNum);
+    if (this.oddPage.pageNum !== newOddPageNum ) {
+      this.oddPage.pageNum = newOddPageNum;
+      await this.fillPage (this.oddPage);
     }
   }
 
@@ -211,7 +220,7 @@ class InfiniteIcons extends HTMLElement {
     document.head.appendChild(style);
   }
 
-  async initialize() {
+  async layout() {
     this.inited = true;
 
     const totalIcons = await this.iconLoader.getTotalIcons();
@@ -222,7 +231,7 @@ class InfiniteIcons extends HTMLElement {
 
     const rows = Math.ceil (totalIcons / newCols);
 
-    this.container.style.height = rows * minRowHeight + "px";
+    this.container.style.minHeight = rows * minRowHeight + "px";
 
     const newRowsPerPage = Math.ceil(window.innerHeight / minRowHeight) + InfiniteIcons.EXTRA_ROWS;
 
@@ -246,32 +255,32 @@ class InfiniteIcons extends HTMLElement {
     this.innerHTML = infiniteIconsTemplate;
 
     this.container = this;
-    this.evenPage = this.querySelector(".evenPage");
-    this.oddPage = this.querySelector(".oddPage");
+    this.evenPage.element = this.querySelector(".evenPage");
+    this.oddPage.element  = this.querySelector(".oddPage");
 
     this.onClick = this.clickOnImage.bind(this);
     this.onScroll = () => this.update();
-    this.onResize = () => this.initialize();
+    this.onResize = () => this.layout();
 
-    this.evenPage.addEventListener("click", this.onClick);
-    this.oddPage.addEventListener("click", this.onClick);
+    this.evenPage.element.addEventListener("click", this.onClick);
+    this.oddPage.element.addEventListener("click", this.onClick);
 
-    window.addEventListener("scrollend", this.onScroll);
+    window.addEventListener("scroll", this.onScroll);
     window.addEventListener("resize", this.onResize);
 
     if (typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => this.initialize());
+      this.resizeObserver = new ResizeObserver(() => this.layout());
       this.resizeObserver.observe(this.container);
     } else {
-      window.addEventListener ("resize", () => this.initialize());
+      window.addEventListener ("resize", () => this.layout());
     }
 
-    this.initialize();
+    this.layout();
   }
 
   disconnectedCallback() {
-    this.evenPage.removeEventListener("click", this.onClick);
-    this.oddPage.removeEventListener("click", this.onClick);
+    this.evenPage.element.removeEventListener("click", this.onClick);
+    this.oddPage.element.removeEventListener("click", this.onClick);
 
     window.removeEventListener("scrollend", this.onScroll);
     window.removeEventListener("resize", this.onResize);
