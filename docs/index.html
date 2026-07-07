@@ -6,9 +6,13 @@
     <script src="js_polyfills/base64/index.js"></script>
     <script src="js_polyfills/scrollend/scrollend.js"></script>
     <script src="js/infiniteScroll.js" type="module"></script>
-    <link rel="stylesheet" href="css/infiniteScroll.css">
     <link rel="stylesheet" href="css/styles.css">
   </head>
+  <style>
+    infinite-icons {
+      width: calc(100% - 50px);
+    }
+  </style>
 <body>
 
 <h1>A Visual Catalog of Retro Macintosh Software</h1>
@@ -20,10 +24,7 @@ country of origin, and the name of the media; then go to <a href="about.html">ab
 to find links to the original media at the Macintosh Garden!
 </p>
 
-<div id="scrollingDiv">
-  <div id="evenPage" class="page"></div>
-  <div id="oddPage"  class="page"></div>
-</div>
+<infinite-icons numbered populateCount="#totalIcons"></infinite-icons>
 
 </body>
 </html>
