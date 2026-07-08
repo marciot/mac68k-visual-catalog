@@ -198,19 +198,23 @@ export class IconLoader {
     return entry.cachedPromise;
   }
 
-  async *loadIcons(startIndex, numberOfIcons = 1) {
+  async *loadIcons(startIndex, numberOfIcons, signal) {
     await this.#ready;
     let emitted = 0;
+
+    if (startIndex >= this.#totalIcons) return [];
+
     let {archiveIndex, localIndex} = this.#findArchive(startIndex);
 
-    while (emitted < numberOfIcons) {
+    while ((emitted < numberOfIcons) && (archiveIndex < this.#index.length)) {
       const icons = await this.#loadArchiveByIndex (archiveIndex);
+      signal.throwIfAborted();
       // Prefetch, to improve performance
       if (archiveIndex + 1 < this.#index.length) {
         this.#loadArchiveByIndex(archiveIndex + 1);
       }
       // Now return the requested icons
-      while ((localIndex < icons.length) && (emitted < numberOfIcons)) {
+      while ((emitted < numberOfIcons) && (localIndex < icons.length)) {
         yield icons[localIndex];
         localIndex++;
         emitted++;
