@@ -1,5 +1,5 @@
 import {untar} from './tinytar/untar.js'
-import {makeIconTitle} from './makeIconTitle.js'
+import {makeIconSummary, findTypeAndCreator} from './makeIconTitle.js'
 
 export class IconLoader {
   constructor(baseDirectory) {
@@ -160,10 +160,10 @@ export class IconLoader {
       }
       // Now triage files based on their type
       const extension = file.name.split('.').pop();
-      if(file.name.endsWith(".csv")) {
+      if(file.name.toLowerCase().endsWith(".csv")) {
         csvFiles.set(file.name, file.data);
       }
-      else if(file.name.endsWith(".png")) {
+      else if(file.name.toLowerCase().endsWith(".png")) {
         iconFiles.push(file);
       }
     });
@@ -171,12 +171,13 @@ export class IconLoader {
     // Now convert the files into an icon record
     const processedIcons = await Promise.all(iconFiles.map(async icon => {
       const name = icon.name;
-      const csvName = name.replace(".png",".csv");
-      const title = makeIconTitle(icon.data, csvFiles.get(csvName), this.#sources);
+      const csvName = name.replace(/png$/i,"csv");
+      const typeAndCreator = findTypeAndCreator(icon.data);
+      const summary = makeIconSummary(icon.data, csvFiles.get(csvName), this.#sources);
       const base64data = icon.data.toBase64();
       //const dataUrl = await this.crunchImage(`data:image/png;base64,${base64data}`);
       const dataUrl = `data:image/png;base64,${base64data}`;
-      return {name, dataUrl, title};
+      return {name, dataUrl, summary, typeAndCreator};
     }));
 
     if (processedIcons.length != this.#index[archiveIndex].count) {

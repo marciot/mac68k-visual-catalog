@@ -16,7 +16,7 @@ function bufferToString(buffer, offset, length, encoding = "utf-8") {
 // file containing the icon as a iTXt chunk in the PNG. This
 // function extracts that information, but is not a general PNG
 // parser and may not work if the PNG was modified.
-function findTypeAndCreator(byteArray) {
+export function findTypeAndCreator(byteArray) {
 
   let offset = 0, chunkAt, chunkLen;
 
@@ -243,9 +243,7 @@ function parseAppCsv(buffer, sourceMap) {
   return results;
 }
 
-export function makeIconTitle(iconData, iconCsv, sourceMap) {
+export function makeIconSummary(iconData, iconCsv, sourceMap) {
   const csvRecords = parseAppCsv(iconCsv, sourceMap);
-  const summary = summarizeApps(csvRecords, sourceMap);
-  const typeAndCreator = findTypeAndCreator(iconData);
-  return `${summary}\n\nFile Type: ${typeAndCreator}\n` ;
+  return summarizeApps(csvRecords, sourceMap);
 }

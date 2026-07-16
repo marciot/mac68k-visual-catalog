@@ -94,8 +94,13 @@ class InfiniteIconsPage {
       for await (const icon of iconLoader.loadIcons(startIndex, this.iconCount, controller.signal)) {
         const img = this.images[iconIndex];
         img.src = icon.dataUrl;
-        img.title = icon.title;
+        img.title = icon.summary + (icon.typeAndCreator ? `\n\nFile Type: ${icon.typeAndCreator}\n` : "");
         img.dataset.srcFile = icon.name;
+        if (icon.typeAndCreator) {
+          img.classList.add("hasTypeAndCreator");
+        } else {
+          img.classList.remove("hasTypeAndCreator");
+        }
         iconIndex++;
       }
 
@@ -170,6 +175,11 @@ class InfiniteIcons extends HTMLElement {
     height:${InfiniteIcons.ICON_SCALED_W}px;
     flex:0 0 auto;
     image-rendering:crisp-edges;
+  }
+
+  infinite-icons img.hasTypeAndCreator {
+    background:#B9FF66;
+    outline:2px solid #B9FF66;
   }
 
   infinite-icons img:hover {
