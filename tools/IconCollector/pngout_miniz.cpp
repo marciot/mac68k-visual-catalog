@@ -1,4 +1,4 @@
-#if USE_MINIZ > 0
+#if USE_MINIZ
   static void start_chunk(struct pngout *s, const char *typecode, uint32_t size);
   static void end_chunk(struct pngout *s);
   static void b8s(struct pngout *s, const uint8_t *b, size_t n);

@@ -42,7 +42,7 @@ static void b8(struct pngout *s, uint8_t n)
 /* adler8: Output byte n and update the CRC32 and Adler CRC */
 static void adler8(struct pngout *s, uint8_t n)
 {
-  #if USE_MINIZ > 0
+  #if USE_MINIZ
     in_data[in_size++] = n;
   #else
     b8(s, n);
@@ -107,7 +107,7 @@ void pngout_start(struct pngout *s, uint16_t width, uint16_t height, uint8_t gra
 
   s->i = 0;                             /* Pixel coordinate (0,0) */
   s->j = 0;
-  #if USE_MINIZ > 0
+  #if USE_MINIZ
     initCompressor();
   #endif
 }
@@ -153,8 +153,7 @@ void pngout_rgb(struct pngout *s, uint8_t r, uint8_t g, uint8_t b)
 
   if (s->i == 0) {                      /* Start a block for each line */
     if (s->j == 0) {                    /* If 1st line, output chunk header */
-      #if USE_MINIZ > 0
-      #else
+      #if USE_MINIZ == 0
       s->bpl = 1 + (s->grayscale ? 1 : 3) * s->w; /* Bytes per line */
       start_chunk(s, "IDAT", 2 + s->h * (5 + s->bpl) + 4);
       b8(s, 0x78);                      /* Start DEFLATE blocks */
@@ -190,7 +189,7 @@ void pngout_rgb(struct pngout *s, uint8_t r, uint8_t g, uint8_t b)
 
 void pngout_end(struct pngout *s) {
   s->nout = 0;
-  #if USE_MINIZ > 0
+  #if USE_MINIZ == 0
   be32(s, ((uint32_t)s->s2 << 16)   /* Append the Adler CRC */
                    + s->s1);
   end_chunk(s);                     /* End of the IDAT chunk */
